@@ -36,3 +36,6 @@ models/*
 
 # OS
 .DS_Store
+
+# Relatórios exploratórios gerados automaticamente
+reports/eda/
