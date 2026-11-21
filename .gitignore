@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Machine Learning artifacts
+*.joblib
+*.pkl
+*.npy
+*.npz
+*.parquet
+*.pt
+*.pth
+
+# Data
+data/raw/*
+data/processed/*
+models/*
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
