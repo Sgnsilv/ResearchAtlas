@@ -234,3 +234,37 @@ def deduplicate_articles(
         )
 
     return list(unique_articles.values())
+
+def assess_abstract_quality(abstract: str) -> dict:
+    """Identifica possíveis problemas de qualidade em resumos."""
+
+    text = normalize_text(abstract)
+    word_count = len(text.split())
+
+    suspicious_patterns = (
+        "preview this article",
+        "previous page",
+        "next page",
+        "declare that they have no conflict",
+        "conflict of interest",
+        "click here",
+    )
+
+    text_lower = text.lower()
+
+    flags = []
+
+    if word_count < 50:
+        flags.append("short_abstract")
+
+    if word_count > 500:
+        flags.append("long_abstract")
+
+    if any(pattern in text_lower for pattern in suspicious_patterns):
+        flags.append("suspicious_content")
+
+    return {
+        "word_count": word_count,
+        "quality_flags": flags,
+        "requires_review": bool(flags),
+    }
