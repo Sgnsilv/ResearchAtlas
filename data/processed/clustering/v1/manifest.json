@@ -1,0 +1,97 @@
+{
+  "version": "1",
+  "created_at_utc": "2026-11-22T02:56:47.523497+00:00",
+  "dataset_articles": 5000,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "embedding_sha256": "13fe24f37622790f6d6630fbdb5e91742060f95a8d7310597d3bd98f2a7f465c",
+  "random_seed": 42,
+  "kmeans_k_values": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "kmeans_stability_seeds": [
+    11,
+    21,
+    42,
+    73,
+    101
+  ],
+  "agglomerative_linkages": [
+    "average",
+    "complete",
+    "ward"
+  ],
+  "hdbscan_eom_configs": [
+    [
+      20,
+      5
+    ],
+    [
+      20,
+      10
+    ],
+    [
+      30,
+      5
+    ],
+    [
+      30,
+      10
+    ],
+    [
+      50,
+      5
+    ],
+    [
+      50,
+      10
+    ],
+    [
+      50,
+      20
+    ],
+    [
+      100,
+      5
+    ],
+    [
+      100,
+      10
+    ]
+  ],
+  "hdbscan_leaf_configs": [
+    [
+      20,
+      5
+    ],
+    [
+      50,
+      5
+    ]
+  ],
+  "files_sha256": {
+    "cluster_assignments.parquet": "ad0715fc912c83f7eb732580b454c8d1f28b4f5b2a5d4b9a1ac2f2b427762f75",
+    "kmeans_metrics.csv": "66994dd714b3cd2ddfc97ff9e487d0e571f4f8edb6cb545b7b3e31a60ed2bf95",
+    "kmeans_stability.csv": "de756eabc5e5ed2f0ac4d9985899a49a6ddb980e9593a8c56edc9da17051dc2e",
+    "agglomerative_metrics.csv": "7a28808a93f641da0bd076ef0492cb88529733d6e999ce4426b14a67feb2c413",
+    "hdbscan_eom_metrics.csv": "97983710a48577fdb941e2ab6b83a94e442ebb86192a69fa481fd589ffd69b63",
+    "hdbscan_leaf_metrics.csv": "d67c2923cf943a14346fcacd0531792ac87757272b1e2c637360836dd3170924"
+  },
+  "limitations": [
+    "A auditoria humana de interdisciplinaridade está pendente.",
+    "A Silhouette do HDBSCAN Leaf foi calculada apenas sobre artigos agrupados.",
+    "O ARI do K-Means avalia estabilidade entre inicializações, não reamostragem."
+  ]
+}
