@@ -1,0 +1,64 @@
+{
+  "version": "1",
+  "created_at_utc": "2026-11-22T03:15:32.701465+00:00",
+  "dataset_articles": 5000,
+  "dataset_sha256": "533fe010fee10dcc87e4ec196886e8a8d9ec6e17f0f4f3d507dc0cf278c79389",
+  "representation": "TF-IDF",
+  "primary_configuration": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "max_features": 10000,
+    "min_df": 3,
+    "max_df": 0.95,
+    "stop_words": "english",
+    "sublinear_tf": true,
+    "norm": "l2",
+    "k": 8,
+    "random_state": 42,
+    "n_init": 10
+  },
+  "k_values_tested": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "candidate_k": [
+    5,
+    8,
+    13
+  ],
+  "stability_seeds": [
+    11,
+    21,
+    42,
+    73,
+    101
+  ],
+  "silhouette_metric": "cosine",
+  "silhouette_sample_size": 2000,
+  "files_sha256": {
+    "tfidf_assignments.parquet": "952e362154673a5728843655bb1b3031ef344c4fbf8bf67411a1c293b6906c18",
+    "kmeans_k_sensitivity.csv": "e302876ccd2ed3f5be6d5be8f512ce7a479f6a4890f88d727473c238b14de2bd",
+    "tfidf_parameter_sensitivity.csv": "51f497fc6cc89b9c5e20ceaf67d692cc13980ee168301ccd344382eaccfefc27",
+    "tfidf_stability.csv": "93e409437599ede7d891ee570968529bdd43a10dfde15c823ad89b61384ee147",
+    "tfidf_final_candidates.csv": "4b65ef6b9eff99097ff378a1d4f4cd39dccae039561f4efdb180233b1c26deed"
+  },
+  "limitations": [
+    "A Silhouette entre representações diferentes não é diretamente equivalente.",
+    "O ARI avalia estabilidade entre inicializações, não estabilidade por reamostragem.",
+    "A interpretação temática é exploratória e não substitui avaliação humana."
+  ]
+}
