@@ -1,3 +1,4 @@
+
 """Cliente HTTP para consulta de artigos na OpenAlex."""
 
 import os
@@ -28,7 +29,7 @@ class OpenAlexClient:
         self.close()
 
     def _request(self, endpoint: str, params: dict) -> dict:
-        """Executa uma requisição com tentativas em falhas transitórias."""
+        """Executa uma requisição com retentativas em falhas temporárias."""
         params = params.copy()
 
         if self.api_key:
@@ -37,10 +38,6 @@ class OpenAlexClient:
         for attempt in range(self.MAX_RETRIES):
             try:
                 response = self.client.get(endpoint, params=params)
-
-                if response.status_code in (429, 500, 502, 503, 504):
-                    response.raise_for_status()
-
                 response.raise_for_status()
                 return response.json()
 
@@ -67,7 +64,7 @@ class OpenAlexClient:
         per_page: int = 10,
         cursor: str | None = None,
     ) -> dict:
-        """Busca artigos com filtros científicos do ResearchAtlas."""
+        """Busca artigos com os filtros científicos do ResearchAtlas."""
         if not subfields:
             raise ValueError("Informe pelo menos uma subárea")
 
@@ -137,3 +134,46 @@ class OpenAlexClient:
                 break
 
             cursor = next_cursor
+
+    def sample_works(
+        self,
+        subfields: list[str],
+        search_term: str,
+        year: int,
+        sample_size: int = 100,
+        seed: int = 42,
+    ) -> list[dict]:
+        """Obtém uma amostra aleatória reprodutível por ano e subárea."""
+        if not subfields:
+            raise ValueError("Informe pelo menos uma subárea")
+
+        if not 2020 <= year <= 2025:
+            raise ValueError("Ano fora do período do ResearchAtlas")
+
+        if not 1 <= sample_size <= 100:
+            raise ValueError("sample_size deve estar entre 1 e 100")
+
+        if not self.api_key:
+            raise ValueError("OPENALEX_API_KEY não configurada")
+
+        filters = (
+            f"from_publication_date:{year}-01-01,"
+            f"to_publication_date:{year}-12-31,"
+            "type:article,"
+            "has_abstract:true,"
+            "language:en,"
+            f"topics.subfield.id:{'|'.join(subfields)},"
+            f"title_and_abstract.search:{search_term}"
+        )
+
+        response = self._request(
+            "/works",
+            {
+                "filter": filters,
+                "sample": sample_size,
+                "seed": seed,
+                "per_page": sample_size,
+            },
+        )
+
+        return response.get("results", [])
