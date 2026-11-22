@@ -1,8 +1,8 @@
 # Protocolo de Coleta de Dados — ResearchAtlas
 
-**Versão:** 0.1 — Proposta inicial  
+**Versão:** 1.0 — Protocolo de coleta ampliada executado  
 **Fonte de dados:** OpenAlex  
-**Status:** Aguardando validação da estratégia de busca
+**Status:** Coleta quantitativa concluída; auditoria de relevância científica pendente
 
 ## 1. Objetivo
 
@@ -491,3 +491,158 @@ A capacidade de recuperar artigos relevantes que não foram selecionados (recall
 **Execução da auditoria:** Issue #04 — Dataset piloto e análise exploratória.
 
 **Status:** protocolo de auditoria definido; execução pendente.
+
+
+## 17. Execução da coleta ampliada — Dataset v1
+
+### 17.1. Objetivo
+
+Executar a estratégia de amostragem estratificada definida no protocolo, produzindo um conjunto de aproximadamente 5.000 artigos científicos para os experimentos de aprendizado de máquina do ResearchAtlas.
+
+### 17.2. Estratégia executada
+
+A coleta utilizou os filtros:
+
+- Período: 2020–2025.
+- Idioma: inglês.
+- Tipo de publicação: artigo científico.
+- Disponibilidade de resumo na OpenAlex.
+- Subáreas científicas definidas nas etapas exploratórias.
+- Busca no título e resumo por termos relacionados à IA.
+
+Foram utilizadas as expressões:
+
+- `machine learning`
+- `deep learning`
+- `artificial intelligence`
+- `neural networks`
+
+A seleção de candidatos utilizou amostragem aleatória com sementes determinísticas, segmentada por área, ano e termo de recuperação.
+
+Parâmetros da execução:
+
+| Parâmetro | Valor |
+|---|---|
+| Semente-base | 42 |
+| Amostra solicitada por consulta | 100 |
+| Rodadas por consulta | 1 |
+| Meta por área | 1.000 |
+| Meta global | 5.000 |
+| Número de áreas | 5 |
+| Número de anos | 6 |
+| Número de termos | 4 |
+| Estratos de seleção | 30 |
+| Consultas planejadas | 120 |
+
+A coleta utilizou cache JSON local para preservar as respostas e permitir retomada das consultas concluídas.
+
+### 17.3. Processamento e seleção
+
+Os registros recuperados passaram pelas seguintes etapas:
+
+1. Reconstrução dos resumos.
+2. Normalização de identificadores e textos.
+3. Consolidação de duplicatas por OpenAlex Work ID.
+4. Preservação dos termos e áreas de recuperação.
+5. Validação estrutural dos registros.
+6. Avaliação exploratória da qualidade textual.
+7. Seleção estratificada por área e ano.
+8. Exportação e geração do relatório de rastreabilidade.
+
+Cada artigo foi contabilizado em uma única área principal de amostragem (`sampling_area`), mantendo a lista de todas as áreas de recuperação (`collection_areas`).
+
+A seleção não utilizou a contagem de citações como critério de ordenação.
+
+### 17.4. Resultados
+
+| Indicador | Resultado |
+|---|---:|
+| Candidatos estruturalmente válidos | 11.210 |
+| Artigos selecionados | 5.000 |
+| Identificadores únicos | 5.000 |
+| Déficit de amostragem | 0 |
+| Artigos recuperados por múltiplas áreas | 7 |
+
+Distribuição por área:
+
+| Área | Artigos |
+|---|---:|
+| Medicina | 1.000 |
+| Astronomia | 1.000 |
+| Biologia | 1.000 |
+| Clima | 1.000 |
+| Engenharia | 1.000 |
+
+Todos os 30 estratos de área e ano atingiram suas cotas de seleção, com aproximadamente 166 ou 167 artigos por estrato.
+
+### 17.5. Qualidade textual
+
+Foram sinalizados 195 artigos, correspondentes a 3,9% do conjunto selecionado.
+
+| Indicador | Ocorrências |
+|---|---:|
+| Resumos curtos | 72 |
+| Resumos longos | 122 |
+| Conteúdo suspeito | 8 |
+
+As categorias podem se sobrepor.
+
+Os artigos sinalizados permaneceram no arquivo selecionado para permitir avaliação posterior, sem exclusão automática.
+
+A distribuição de alertas por área foi:
+
+| Área | Artigos sinalizados |
+|---|---:|
+| Medicina | 55 |
+| Astronomia | 22 |
+| Biologia | 81 |
+| Clima | 21 |
+| Engenharia | 16 |
+
+A maior incidência em Biologia deverá ser investigada antes do tratamento definitivo dos textos.
+
+### 17.6. Identificação e rastreabilidade
+
+Arquivo de referência:
+
+`data/processed/dataset_selected.parquet`
+
+SHA-256:
+
+`533fe010fee10dcc87e4ec196886e8a8d9ec6e17f0f4f3d507dc0cf278c79389`
+
+O hash identifica os bytes exatos do arquivo selecionado nessa execução.
+
+Também foram produzidos:
+
+- `data/processed/dataset_candidates.parquet`
+- `data/processed/dataset_report.json`
+- Cache das consultas em `data/raw/openalex_cache/`
+
+O relatório metodológico está disponível em:
+
+`reports/experiments/final_dataset.md`
+
+### 17.7. Limitações e validações pendentes
+
+A conclusão quantitativa não equivale à aprovação científica de todos os artigos.
+
+Permanecem pendentes:
+
+- Auditoria humana da pertinência dos artigos.
+- Verificação da aplicação efetiva de IA.
+- Avaliação dos resumos inadequados.
+- Decisão documentada sobre eventuais exclusões.
+- Definição do subconjunto textual adequado aos embeddings.
+
+A amostragem balanceada é apropriada para experimentos comparativos entre estratos, mas não representa a distribuição natural da produção científica.
+
+A reprodutibilidade exata depende da preservação dos arquivos coletados, pois a OpenAlex pode atualizar seus registros.
+
+### 17.8. Encaminhamento
+
+O conjunto selecionado v1 será preservado como referência imutável para os experimentos.
+
+Caso a auditoria ou o processamento textual resultem em exclusões, será produzida uma nova versão derivada, com critérios, contagens e identificador próprios, sem sobrescrever a v1.
+
+**Estado:** coleta e integridade quantitativa concluídas; validação científica pendente.

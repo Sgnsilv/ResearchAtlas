@@ -3,15 +3,13 @@
 
 **Exploração de comunidades científicas interdisciplinares por meio de clusterização semântica e análise de grafos.**
 
-O ResearchAtlas é uma plataforma interativa desenvolvida em Python e Streamlit para investigar como a Inteligência Artificial é aplicada a diferentes áreas do conhecimento científico.
+O ResearchAtlas é um projeto de pesquisa e uma plataforma interativa desenvolvida em Python e Streamlit para investigar como a Inteligência Artificial é aplicada a diferentes áreas do conhecimento científico.
 
-O projeto utiliza metadados de publicações da OpenAlex e técnicas de aprendizado não supervisionado para descobrir padrões semânticos, comunidades de pesquisa e possíveis conexões interdisciplinares.
+Utilizando metadados da OpenAlex e técnicas de aprendizado não supervisionado, buscamos identificar padrões semânticos, comunidades de pesquisa e possíveis conexões interdisciplinares.
 
-> Projeto acadêmico da disciplina de Aprendizagem de Máquina, desenvolvido também como portfólio de Machine Learning.
+> Projeto acadêmico de Aprendizagem de Máquina, desenvolvido também como portfólio técnico e científico.
 
-## Objetivo
-
-Investigar a seguinte pergunta científica:
+## Pergunta científica
 
 **É possível identificar comunidades de pesquisa interdisciplinares a partir da similaridade semântica de artigos sobre aplicações de Inteligência Artificial e descobrir conexões entre áreas científicas distintas?**
 
@@ -23,28 +21,58 @@ Investigar a seguinte pergunta científica:
 - Clima e Meio Ambiente
 - Engenharia
 
-O recorte considera artigos científicos publicados entre 2020 e 2025.
+O período de investigação é de **2020 a 2025**.
 
-A meta para o dataset definitivo é de aproximadamente **5.000 artigos**, distribuídos entre as cinco áreas. Esse volume ainda não foi coletado.
+## Estado atual
+
+A etapa de coleta ampliada está concluída.
+
+| Indicador | Resultado |
+|---|---:|
+| Artigos selecionados | 5.000 |
+| Identificadores únicos | 5.000 |
+| Candidatos estruturalmente válidos | 11.210 |
+| Artigos por área de amostragem | 1.000 |
+| Estratos área × ano preenchidos | 30/30 |
+| Déficit de amostragem | 0 |
+| Artigos recuperados por múltiplas áreas | 7 |
+| Artigos sinalizados para revisão textual | 195 |
+
+**Importante:** o conjunto foi validado quantitativa e estruturalmente. A auditoria de relevância científica ainda está pendente.
+
+O dataset de referência é `data/processed/dataset_selected.parquet`.
+
+### Identificação da versão
+
+**Dataset selecionado v1**
+
+SHA-256:
+
+```text
+533fe010fee10dcc87e4ec196886e8a8d9ec6e17f0f4f3d507dc0cf278c79389
+```
+
+A identificação acima corresponde ao arquivo efetivamente produzido na execução documentada.
 
 ## Tecnologias
 
 | Categoria | Tecnologias |
 |---|---|
 | Linguagem | Python 3.12 |
-| Gerenciamento de dependências | uv |
-| Interface | Streamlit |
-| Visualização | Plotly |
-| Fonte de dados | OpenAlex API |
+| Dependências e ambiente | uv |
+| Fonte científica | OpenAlex API |
+| Consultas HTTP | HTTPX |
 | Manipulação de dados | pandas, NumPy, PyArrow |
-| Requisições HTTP | HTTPX |
+| Armazenamento | Parquet, JSON |
+| Visualizações | Plotly |
+| Interface | Streamlit |
 | Testes | pytest |
 | Machine Learning planejado | scikit-learn, Sentence Transformers, HDBSCAN |
 | Redução de dimensionalidade planejada | UMAP |
-| Análise de grafos planejada | NetworkX, Leiden |
-| Ambiente experimental planejado | Google Colab |
+| Grafos planejados | NetworkX, Leiden |
+| Experimentos pesados planejados | Google Colab |
 
-As bibliotecas destinadas aos experimentos de Machine Learning serão adicionadas conforme a implementação.
+As dependências de Machine Learning serão adicionadas conforme a implementação da pipeline experimental.
 
 ## Instalação
 
@@ -52,48 +80,47 @@ As bibliotecas destinadas aos experimentos de Machine Learning serão adicionada
 
 - Git
 - uv
+- Python 3.12
 - Acesso à internet
 - Chave de API da OpenAlex
 
-### 1. Clonar o repositório
+### Clonar o repositório
 
 ```bash
 git clone https://github.com/Sgnsilv/ResearchAtlas.git
 cd ResearchAtlas
 ```
 
-### 2. Instalar Python e dependências
+### Instalar as dependências
 
 ```bash
 uv python install 3.12
 uv sync --dev
 ```
 
-O uv gerencia o ambiente virtual `.venv` e instala as dependências do projeto.
+O uv configura o ambiente virtual e instala as dependências presentes no `pyproject.toml` e no `uv.lock`.
 
-Não é necessário ativar manualmente o ambiente virtual ao utilizar `uv run`.
+### Configurar a OpenAlex
 
-### 3. Configurar a OpenAlex
-
-Obtenha sua chave de API em:
+Obtenha uma chave em:
 
 https://openalex.org/settings/api
 
-Na raiz do projeto:
+Crie o arquivo de configuração:
 
 ```bash
 cp .env.example .env
 ```
 
-Configure o arquivo `.env`:
+Defina a variável:
 
 ```dotenv
 OPENALEX_API_KEY=sua_chave_aqui
 ```
 
-O cliente OpenAlex lê essa variável do ambiente. Os comandos que acessam a API utilizam `uv run --env-file .env`.
+Nunca compartilhe sua chave ou versione o arquivo `.env`.
 
-**Nunca envie a chave de API ao GitHub.**
+Os comandos que consultam a API utilizam `uv run --env-file .env`.
 
 ## Estrutura do projeto
 
@@ -106,7 +133,8 @@ ResearchAtlas/
 │       ├── data/
 │       │   ├── openalex.py
 │       │   ├── preprocessing.py
-│       │   └── pilot.py
+│       │   ├── pilot.py
+│       │   └── dataset.py
 │       ├── analysis/
 │       │   ├── eda.py
 │       │   └── audit.py
@@ -117,140 +145,116 @@ ResearchAtlas/
 ├── notebooks/
 ├── data/
 │   ├── raw/
+│   │   └── openalex_cache/
 │   └── processed/
+│       ├── pilot_articles.parquet
+│       ├── pilot_report.json
+│       ├── dataset_candidates.parquet
+│       ├── dataset_selected.parquet
+│       ├── dataset_report.json
+│       └── audit/
 ├── models/
 ├── reports/
 │   ├── eda/
 │   ├── figures/
 │   └── experiments/
-│       └── pilot_dataset.md
+│       ├── pilot_dataset.md
+│       └── final_dataset.md
 ├── docs/
 │   └── dataset.md
 ├── tests/
-│   ├── test_openalex.py
-│   ├── test_pilot.py
-│   └── test_audit.py
 ├── .env.example
 ├── .gitignore
 ├── pyproject.toml
 └── uv.lock
 ```
 
-Alguns diretórios estão reservados para funcionalidades futuras.
+Alguns diretórios são reservados para futuras funcionalidades.
 
-Datasets, modelos e artefatos gerados automaticamente não devem ser versionados diretamente no Git.
+Os arquivos de dados e artefatos gerados são locais e não integram o repositório Git.
 
 ## Funcionalidades implementadas
 
 ### 1. Protocolo científico
 
-O protocolo de construção do dataset está documentado em `docs/dataset.md`.
-
-Ele estabelece o recorte temporal, as áreas científicas, os critérios de seleção e a estratégia de coleta.
+O arquivo `docs/dataset.md` documenta a pergunta científica, os critérios de seleção, as áreas investigadas, os filtros da OpenAlex e as decisões metodológicas.
 
 ### 2. Cliente OpenAlex
 
-O módulo `src/research_atlas/data/openalex.py` oferece:
+`src/research_atlas/data/openalex.py`
 
-- Consultas à API de artigos científicos.
-- Filtros por subárea científica e termo de busca.
-- Recuperação paginada.
-- Tratamento de falhas temporárias.
-- Retentativas para erros HTTP recuperáveis.
+Funcionalidades:
+
 - Autenticação por variável de ambiente.
+- Recuperação filtrada de artigos científicos.
+- Consultas por subárea e termo de busca.
+- Paginação por cursor.
+- Amostragem aleatória com semente.
+- Tratamento e retentativas de falhas HTTP temporárias.
 
 ### 3. Pré-processamento
 
-O módulo `src/research_atlas/data/preprocessing.py` implementa:
+`src/research_atlas/data/preprocessing.py`
 
-- Reconstrução de resumos em índice invertido.
-- Normalização dos identificadores OpenAlex.
-- Normalização textual.
-- Validação estrutural dos artigos.
-- Deduplicação e preservação de metadados.
+Funcionalidades:
+
+- Reconstrução dos resumos da OpenAlex.
+- Normalização de texto e identificadores.
+- Validação estrutural.
+- Deduplicação por OpenAlex ID.
+- Preservação de áreas e termos de recuperação.
 - Identificação de possíveis problemas de qualidade textual.
 
-A validação estrutural e a avaliação de qualidade textual são procedimentos separados.
+### 4. Dataset piloto
 
-### 4. Construção do dataset piloto
+`src/research_atlas/data/pilot.py`
 
-O módulo `src/research_atlas/data/pilot.py` integra coleta, normalização, validação e avaliação textual.
-
-Para executar:
+Executar:
 
 ```bash
-uv run --env-file .env python -m research_atlas.data.pilot
+PYTHONPATH=src uv run --env-file .env python -m research_atlas.data.pilot
 ```
 
-O processo gera:
+A execução documentada recuperou:
 
-```text
-data/processed/
-├── pilot_articles.parquet
-└── pilot_report.json
-```
+- 400 registros brutos.
+- 398 artigos únicos.
+- 13 artigos sinalizados para revisão textual.
 
-O arquivo Parquet contém os artigos processados e indicadores de qualidade textual.
+O piloto permitiu identificar limitações na qualidade dos resumos e um desequilíbrio temporal provocado pela recuperação dos primeiros resultados por relevância.
 
-O arquivo JSON registra estatísticas da coleta, deduplicação, validação e alertas.
+Relatório: `reports/experiments/pilot_dataset.md`.
 
-#### Resultados da execução piloto
+### 5. Análise exploratória
 
-| Indicador | Resultado |
-|---|---:|
-| Registros brutos | 400 |
-| Artigos únicos | 398 |
-| Ocorrências duplicadas | 2 |
-| Artigos estruturalmente válidos | 398 |
-| Artigos estruturalmente inválidos | 0 |
-| Artigos sinalizados para revisão textual | 13 |
+`src/research_atlas/analysis/eda.py`
 
-A seleção recupera os primeiros resultados de cada consulta, ordenados pela relevância da fonte. Portanto, o dataset piloto não deve ser considerado uma amostra representativa da literatura científica.
-
-Os valores correspondem à execução documentada e podem variar em novas consultas.
-
-### 5. Análise exploratória de dados
-
-O módulo `src/research_atlas/analysis/eda.py` permite analisar:
-
-- Distribuição de publicações por ano.
-- Distribuição de artigos por área de coleta.
-- Comprimento dos resumos.
-- Frequência de alertas de qualidade textual.
-- Registros recuperados por múltiplas áreas.
-
-Para executar:
+Executar:
 
 ```bash
-uv run python -m research_atlas.analysis.eda
+PYTHONPATH=src uv run python -m research_atlas.analysis.eda
 ```
 
-Os resultados são gerados em:
+A análise gera gráficos interativos em `reports/eda/`:
 
-```text
-reports/eda/
-├── 01_publicacoes_por_ano.html
-├── 02_artigos_por_area.html
-├── 03_tamanho_resumos.html
-├── 04_qualidade_textual.html
-└── eda_summary.json
-```
+- Distribuição por ano.
+- Artigos por área de coleta.
+- Distribuição do tamanho dos resumos.
+- Indicadores de qualidade textual.
 
-Os gráficos HTML são interativos e podem ser abertos no navegador.
+A EDA implementada originalmente foi aplicada ao dataset piloto.
 
-Na execução piloto, observou-se concentração de publicações nos anos de 2020 e 2021, indicando a necessidade de uma estratégia mais equilibrada para a coleta definitiva.
+### 6. Amostragem para auditoria
 
-### 6. Auditoria científica
+`src/research_atlas/analysis/audit.py`
 
-O módulo `src/research_atlas/analysis/audit.py` gera uma amostra reproduzível para revisão humana.
-
-Para executar:
+Executar:
 
 ```bash
-uv run python -m research_atlas.analysis.audit
+PYTHONPATH=src uv run python -m research_atlas.analysis.audit
 ```
 
-São gerados dois arquivos:
+São gerados dois CSVs independentes para avaliação humana:
 
 ```text
 data/processed/audit/
@@ -258,65 +262,128 @@ data/processed/audit/
 └── reviewer_2.csv
 ```
 
-A amostra contém 100 registros, sendo 20 artigos por área.
+A amostra contém 100 artigos, com 20 por área científica.
 
-Cada avaliadora deve analisar independentemente:
+A avaliação deve considerar relevância da aplicação de IA, pertinência científica e adequação do resumo.
 
-- A relevância científica do artigo.
-- A adequação do resumo para análise semântica.
-- Os casos duvidosos ou inadequados.
+**Estado:** amostra preparada; avaliação manual pendente.
 
-Após o preenchimento das planilhas, serão avaliadas a concordância entre as classificações e as divergências, incluindo o coeficiente Kappa de Cohen.
+### 7. Dataset ampliado
 
-**Estado atual:** amostra gerada; avaliação humana pendente.
+`src/research_atlas/data/dataset.py`
 
-## Qualidade dos dados
+O pipeline integra:
 
-A qualidade do dataset é avaliada em duas dimensões.
+1. Consultas aleatórias da OpenAlex por área, ano e termo.
+2. Sementes determinísticas por consulta.
+3. Cache local das respostas.
+4. Normalização e deduplicação.
+5. Validação estrutural.
+6. Avaliação de qualidade textual.
+7. Seleção estratificada por área e ano.
+8. Relatório de rastreabilidade.
+9. Exportação em Parquet.
 
-### Validação estrutural
+#### Coleta ampliada
 
-Verifica identificador, título, resumo, período, idioma, tipo de publicação, retratação e conflitos de metadados.
+```bash
+PYTHONPATH=src uv run --env-file .env python -m research_atlas.data.dataset \
+  --sample-size 100 \
+  --target-per-area 1000 \
+  --seed 42 \
+  --rounds 1
+```
 
-### Qualidade textual
+A coleta produz:
 
-Sinaliza possíveis problemas nos resumos:
+```text
+data/processed/
+├── dataset_candidates.parquet
+├── dataset_selected.parquet
+└── dataset_report.json
+```
 
-| Indicador | Condição |
-|---|---|
-| `short_abstract` | Menos de 50 palavras |
-| `long_abstract` | Mais de 500 palavras |
-| `suspicious_content` | Presença de padrões textuais suspeitos |
+O arquivo `dataset_candidates.parquet` contém os candidatos estruturalmente válidos.
 
-Os alertas não provocam exclusão automática de registros.
+O arquivo `dataset_selected.parquet` contém os 5.000 artigos selecionados, com um identificador único por artigo e uma área principal de amostragem.
 
-A relevância científica deverá ser verificada separadamente por auditoria humana.
+O relatório registra os parâmetros e os resultados da seleção.
 
-## Resultados exploratórios
+#### Cache e retomada
 
-A execução piloto recuperou 398 artigos únicos:
+As respostas de cada consulta são armazenadas em:
 
-| Área | Artigos |
+```text
+data/raw/openalex_cache/
+```
+
+Executar novamente uma coleta com os mesmos parâmetros permite reutilizar as respostas disponíveis no cache.
+
+Isso evita repetir consultas já concluídas em caso de interrupção.
+
+Alterações nos parâmetros da consulta podem produzir novos arquivos de cache.
+
+O mecanismo não garante que uma nova coleta sem o cache produza os mesmos registros, pois a cobertura da OpenAlex pode mudar.
+
+## Distribuição da amostra ampliada
+
+| Área de amostragem | Artigos |
 |---|---:|
-| Medicina | 80 |
-| Astronomia | 80 |
-| Biologia | 80 |
-| Clima | 80 |
-| Engenharia | 78 |
+| Medicina | 1.000 |
+| Astronomia | 1.000 |
+| Biologia | 1.000 |
+| Clima | 1.000 |
+| Engenharia | 1.000 |
+| **Total** | **5.000** |
 
-A mediana dos resumos foi de 194,5 palavras.
+Cada combinação de área e ano recebeu aproximadamente 166 ou 167 artigos, conforme a distribuição das cotas.
 
-Foram identificados 13 artigos com pelo menos um alerta de qualidade textual.
+A amostragem foi projetada para comparações equilibradas. Ela não representa a frequência natural de publicações na literatura.
 
-Nenhum artigo foi recuperado por múltiplas áreas de coleta. Esse resultado não demonstra ausência de interdisciplinaridade científica, que será investigada posteriormente por técnicas semânticas.
+## Qualidade textual da amostra ampliada
 
-O relatório metodológico completo está disponível em:
+| Indicador | Artigos |
+|---|---:|
+| Resumo com menos de 50 palavras | 72 |
+| Resumo com mais de 500 palavras | 122 |
+| Conteúdo textual suspeito | 8 |
+| Pelo menos um alerta | 195 |
 
-`reports/experiments/pilot_dataset.md`
+Os indicadores podem ocorrer simultaneamente e não são motivos automáticos de exclusão.
 
-## Executando a aplicação
+### Alertas por área
 
-Para iniciar a interface Streamlit:
+| Área | Artigos sinalizados |
+|---|---:|
+| Medicina | 55 |
+| Astronomia | 22 |
+| Biologia | 81 |
+| Clima | 21 |
+| Engenharia | 16 |
+
+A Biologia apresentou a maior proporção de artigos sinalizados.
+
+Esses registros precisarão de análise adicional antes da definição da política de entrada dos modelos de embeddings.
+
+O relatório completo está disponível em:
+
+`reports/experiments/final_dataset.md`
+
+## Testes
+
+Execute:
+
+```bash
+uv run pytest -v
+```
+
+A suíte cobre o cliente OpenAlex, pré-processamento, coleta piloto, qualidade textual, amostragem para auditoria, seleção estratificada e cache das consultas.
+
+Os testes não devem depender de consultas reais à API.
+
+## Interface
+
+Inicie o Streamlit:
 
 ```bash
 uv run streamlit run app/Home.py
@@ -326,79 +393,73 @@ Acesse:
 
 http://localhost:8501
 
-A interface apresenta a página inicial do projeto. Os dashboards científicos ainda serão desenvolvidos.
-
-## Executando os testes
-
-Para executar a suíte completa:
-
-```bash
-uv run pytest -v
-```
-
-A execução de referência da Issue #04 concluiu **39 testes com sucesso**.
-
-Os testes verificam as funcionalidades de coleta, pré-processamento, indicadores de qualidade textual e amostragem científica, sem necessidade de realizar novas consultas à API.
+Os dashboards científicos e a visualização dos clusters serão desenvolvidos nas próximas etapas.
 
 ## Reprodutibilidade
 
-Para reproduzir as etapas implementadas:
+A construção ampliada utiliza:
+
+- Período fixo de 2020 a 2025.
+- Cinco áreas de amostragem.
+- Quatro termos de busca.
+- Semente-base 42.
+- Consultas aleatórias segmentadas.
+- Deduplicação global pelo OpenAlex ID.
+- Cotas por área e ano.
+- Cache local.
+- Relatório de parâmetros.
+- Hash SHA-256 do dataset selecionado.
+
+Para confirmar a integridade do arquivo de referência:
 
 ```bash
-# 1. Instalar dependências
-uv sync --dev
-
-# 2. Construir o dataset piloto
-uv run --env-file .env python -m research_atlas.data.pilot
-
-# 3. Gerar a análise exploratória
-uv run python -m research_atlas.analysis.eda
-
-# 4. Preparar a auditoria
-uv run python -m research_atlas.analysis.audit
-
-# 5. Executar os testes
-uv run pytest -v
+sha256sum data/processed/dataset_selected.parquet
 ```
 
-A amostragem para auditoria utiliza uma semente fixa para garantir reprodutibilidade sobre um mesmo conjunto de entrada.
+O valor esperado para a versão v1 é:
 
-Entretanto, novas consultas à OpenAlex podem recuperar resultados diferentes caso os registros ou a ordenação da fonte sejam atualizados.
+```text
+533fe010fee10dcc87e4ec196886e8a8d9ec6e17f0f4f3d507dc0cf278c79389
+```
 
-Os experimentos mais pesados serão realizados preferencialmente no Google Colab. Os artefatos serão exportados para a aplicação Streamlit, evitando processamento intensivo durante a utilização do dashboard.
+Datasets e caches não são versionados diretamente no Git. É necessário preservar cópias externas dos arquivos da coleta para permitir a reprodução exata dos experimentos.
+
+## Limitações científicas
+
+- A classificação temática da OpenAlex pode apresentar erros.
+- A presença de termos relacionados à IA não confirma aplicação efetiva dessas técnicas.
+- A auditoria humana ainda não foi concluída.
+- A amostra é balanceada artificialmente e não representa a distribuição natural das publicações.
+- Resumos curtos, longos ou inadequados podem afetar embeddings.
+- A identificação de múltiplas áreas na coleta não equivale à descoberta de interdisciplinaridade semântica.
+- Atualizações da fonte podem afetar novas coletas.
 
 ## Próximas etapas
 
-- Concluir a auditoria humana de relevância científica.
-- Implementar a coleta definitiva, estratificada por área e ano.
-- Construir o dataset científico de aproximadamente 5.000 artigos.
-- Implementar representações TF-IDF e embeddings semânticos.
-- Desenvolver o baseline TF-IDF + K-Means.
-- Comparar algoritmos como HDBSCAN e Agglomerative Clustering.
-- Avaliar qualidade, estabilidade e interpretação dos clusters.
-- Visualizar os agrupamentos usando redução de dimensionalidade.
-- Desenvolver dashboards interativos em Streamlit.
-- Explorar redes de citações e comunidades científicas.
-- Investigar a evolução temporal dos agrupamentos.
+1. Concluir a auditoria humana de relevância científica.
+2. Definir a política de tratamento dos resumos sinalizados.
+3. Implementar o pipeline de Machine Learning.
+4. Criar o baseline TF-IDF + K-Means.
+5. Gerar embeddings semânticos.
+6. Comparar algoritmos de clusterização.
+7. Avaliar qualidade, estabilidade e interpretação dos agrupamentos.
+8. Produzir visualizações e dashboards científicos.
+9. Explorar conexões em grafos de citações e evolução temporal.
 
 ## Organização do desenvolvimento
 
-O projeto utiliza:
-
 - `main`: versão estável.
 - `dev`: integração das funcionalidades.
-- Branches específicas por issue, quando necessário.
+- Branches por issue, quando necessário.
 
-Os commits seguem Conventional Commits, com descrições em português.
+Os commits seguem o padrão Conventional Commits, com mensagens em português.
 
-Cada issue deve incluir testes e atualização da documentação correspondente.
-
-## Fonte de dados
+## Fonte científica
 
 [OpenAlex](https://openalex.org/)
 
-Os dados são obtidos respeitando os termos de utilização da fonte e os critérios científicos documentados no projeto.
+O projeto utiliza os dados observando as condições de acesso e os critérios científicos definidos no protocolo.
 
 ---
 
-**Status:** em desenvolvimento — pipeline piloto, EDA e amostragem de auditoria implementados.
+**Status:** coleta ampliada concluída; validação científica pendente; pipeline de Machine Learning em preparação.
