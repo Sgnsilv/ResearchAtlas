@@ -434,6 +434,74 @@ Datasets e caches não são versionados diretamente no Git. É necessário prese
 - A identificação de múltiplas áreas na coleta não equivale à descoberta de interdisciplinaridade semântica.
 - Atualizações da fonte podem afetar novas coletas.
 
+
+## Embeddings semânticos — Issue #05
+
+O ResearchAtlas utiliza o modelo `BAAI/bge-small-en-v1.5` para gerar representações semânticas dos 5.000 artigos científicos.
+
+### Metodologia
+
+- **Entrada:** título + resumo.
+- **Modelo:** BGE-small-en-v1.5.
+- **Dimensão:** 384.
+- **Limite de contexto:** 512 tokens.
+- **Segmentação:** janelas de 510 tokens de conteúdo.
+- **Sobreposição:** 64 tokens.
+- **Agregação:** média ponderada dos embeddings dos trechos, seguida de normalização L2.
+- **Ambiente experimental:** Google Colab com GPU Tesla T4.
+
+Foram processados 5.678 trechos, produzindo um vetor normalizado para cada artigo.
+
+### Artefatos
+
+Os embeddings estão versionados em:
+
+`data/processed/embeddings/bge-small-en-v1.5-v1/`
+
+| Arquivo | Conteúdo |
+|---|---|
+| `embeddings.npy` | Matriz de 5.000 × 384 embeddings |
+| `metadata.parquet` | Correspondência entre vetores e artigos |
+| `manifest.json` | Modelo, parâmetros e identificadores de integridade |
+
+O SHA-256 de `embeddings.npy` é:
+
+`13fe24f37622790f6d6630fbdb5e91742060f95a8d7310597d3bd98f2a7f465c`
+
+### Carregamento
+
+```python
+import numpy as np
+import pandas as pd
+
+base = "data/processed/embeddings/bge-small-en-v1.5-v1"
+
+embeddings = np.load(f"{base}/embeddings.npy")
+metadata = pd.read_parquet(f"{base}/metadata.parquet")
+
+print(embeddings.shape)  # (5000, 384)
+print(metadata.shape)    # (5000, 9)
+```
+
+A coluna `embedding_index` identifica a posição do vetor correspondente a cada artigo.
+
+### Reprodutibilidade
+
+O notebook experimental está disponível em:
+
+`notebooks/01_embeddings_semanticos.ipynb`
+
+As funções reutilizáveis de segmentação e agregação estão em:
+
+`src/research_atlas/features/embeddings.py`
+
+A metodologia completa está documentada em:
+
+`reports/experiments/semantic_embeddings.md`
+
+**Estado:** embeddings gerados, validados e disponíveis para os experimentos de clusterização. A auditoria científica do dataset permanece pendente.
+
+
 ## Próximas etapas
 
 1. Concluir a auditoria humana de relevância científica.
