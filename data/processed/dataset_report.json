@@ -1,0 +1,1364 @@
+{
+  "generated_at_utc": "2026-11-22T01:14:14.391388+00:00",
+  "protocol": "docs/dataset.md",
+  "sampling_method": "openalex_seeded_random_stratified",
+  "base_seed": 42,
+  "sample_per_query": 100,
+  "rounds_per_query": 1,
+  "target_per_area": 1000,
+  "target_total": 5000,
+  "raw_records": 11701,
+  "invalid_identifiers": 0,
+  "unique_candidates": 11210,
+  "valid_candidates": 11210,
+  "duplicate_occurrences": 491,
+  "exclusion_reasons": {},
+  "selected_total": 5000,
+  "selected_unique_ids": 5000,
+  "selected_per_area": {
+    "Medicina": 1000,
+    "Astronomia": 1000,
+    "Biologia": 1000,
+    "Clima": 1000,
+    "Engenharia": 1000
+  },
+  "multi_area_candidates": 14,
+  "multi_area_selected": 7,
+  "text_quality": {
+    "requires_review": 195,
+    "short_abstracts": 72,
+    "long_abstracts": 122,
+    "suspicious_content": 8
+  },
+  "strata": [
+    {
+      "area": "Medicina",
+      "year": 2020,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 395
+    },
+    {
+      "area": "Medicina",
+      "year": 2021,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 398
+    },
+    {
+      "area": "Medicina",
+      "year": 2022,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 390
+    },
+    {
+      "area": "Medicina",
+      "year": 2023,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 397
+    },
+    {
+      "area": "Medicina",
+      "year": 2024,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 396
+    },
+    {
+      "area": "Medicina",
+      "year": 2025,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 399
+    },
+    {
+      "area": "Astronomia",
+      "year": 2020,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 281
+    },
+    {
+      "area": "Astronomia",
+      "year": 2021,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 306
+    },
+    {
+      "area": "Astronomia",
+      "year": 2022,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 308
+    },
+    {
+      "area": "Astronomia",
+      "year": 2023,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 331
+    },
+    {
+      "area": "Astronomia",
+      "year": 2024,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 357
+    },
+    {
+      "area": "Astronomia",
+      "year": 2025,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 375
+    },
+    {
+      "area": "Biologia",
+      "year": 2020,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 331
+    },
+    {
+      "area": "Biologia",
+      "year": 2021,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 336
+    },
+    {
+      "area": "Biologia",
+      "year": 2022,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 372
+    },
+    {
+      "area": "Biologia",
+      "year": 2023,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 388
+    },
+    {
+      "area": "Biologia",
+      "year": 2024,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 380
+    },
+    {
+      "area": "Biologia",
+      "year": 2025,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 389
+    },
+    {
+      "area": "Clima",
+      "year": 2020,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 378
+    },
+    {
+      "area": "Clima",
+      "year": 2021,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 374
+    },
+    {
+      "area": "Clima",
+      "year": 2022,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 388
+    },
+    {
+      "area": "Clima",
+      "year": 2023,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 385
+    },
+    {
+      "area": "Clima",
+      "year": 2024,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 388
+    },
+    {
+      "area": "Clima",
+      "year": 2025,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 396
+    },
+    {
+      "area": "Engenharia",
+      "year": 2020,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 397
+    },
+    {
+      "area": "Engenharia",
+      "year": 2021,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 398
+    },
+    {
+      "area": "Engenharia",
+      "year": 2022,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 398
+    },
+    {
+      "area": "Engenharia",
+      "year": 2023,
+      "target": 167,
+      "selected": 167,
+      "shortfall": 0,
+      "available_candidates": 395
+    },
+    {
+      "area": "Engenharia",
+      "year": 2024,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 399
+    },
+    {
+      "area": "Engenharia",
+      "year": 2025,
+      "target": 166,
+      "selected": 166,
+      "shortfall": 0,
+      "available_candidates": 399
+    }
+  ],
+  "queries": [
+    {
+      "area": "Medicina",
+      "year": 2020,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2439430058,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2020,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1883761423,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2020,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2554933123,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2020,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2052472900,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2021,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3779512166,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2021,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1769603791,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2021,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2884090617,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2021,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 4218649587,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2022,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 4202114140,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2022,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1422216846,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2022,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2154332179,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2022,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1523847408,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2023,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3841244391,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2023,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2620668768,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2023,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 3455630742,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2023,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 3486095394,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2024,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 213881381,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2024,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 4294536092,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2024,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 3064748473,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2024,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 910834362,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2025,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2937617231,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2025,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 943250945,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2025,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 1604838769,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Medicina",
+      "year": 2025,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 959143863,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2020,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 1400284294,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2020,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2316927070,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2020,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 4292686170,
+      "requested": 100,
+      "returned": 26
+    },
+    {
+      "area": "Astronomia",
+      "year": 2020,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2967522124,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2021,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3207487698,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2021,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 605894830,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2021,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 458530106,
+      "requested": 100,
+      "returned": 32
+    },
+    {
+      "area": "Astronomia",
+      "year": 2021,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2182401187,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2022,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2011764529,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2022,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 3585234023,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2022,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 516773968,
+      "requested": 100,
+      "returned": 50
+    },
+    {
+      "area": "Astronomia",
+      "year": 2022,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2551261696,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2023,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3461876866,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2023,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1784650379,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2023,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 125227871,
+      "requested": 100,
+      "returned": 59
+    },
+    {
+      "area": "Astronomia",
+      "year": 2023,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1968020811,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2024,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3620008956,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2024,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2155915605,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2024,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 1016772013,
+      "requested": 100,
+      "returned": 87
+    },
+    {
+      "area": "Astronomia",
+      "year": 2024,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 354767342,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2025,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3448902190,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2025,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2994726779,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2025,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 3554708814,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Astronomia",
+      "year": 2025,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 722823318,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2020,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2073034873,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2020,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1189019957,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2020,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2716677301,
+      "requested": 100,
+      "returned": 67
+    },
+    {
+      "area": "Biologia",
+      "year": 2020,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1221386494,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2021,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 4172069499,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2021,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1221540986,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2021,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 4225989404,
+      "requested": 100,
+      "returned": 84
+    },
+    {
+      "area": "Biologia",
+      "year": 2021,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 3189566065,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2022,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3914263963,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2022,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 3704212305,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2022,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 800163348,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2022,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1517393747,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2023,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3140340981,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2023,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 664479497,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2023,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 3165068751,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2023,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 978637840,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2024,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 1570379919,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2024,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 3497136940,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2024,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 3933692452,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2024,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2085046431,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2025,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 270504885,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2025,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2774160560,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2025,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2027379643,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Biologia",
+      "year": 2025,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 454165813,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2020,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2366463576,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2020,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 789580280,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2020,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2262318909,
+      "requested": 100,
+      "returned": 96
+    },
+    {
+      "area": "Clima",
+      "year": 2020,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2742555625,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2021,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3137160505,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2021,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2452625827,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2021,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 814197321,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2021,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1924941376,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2022,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2613797460,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2022,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 710239130,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2022,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 144658352,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2022,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2281505141,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2023,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 595453514,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2023,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2305226231,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2023,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2455342812,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2023,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2607283230,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2024,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 1720616247,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2024,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 24701915,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2024,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 1269853898,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2024,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 450038791,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2025,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 339625371,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2025,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2698296447,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2025,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 1304250533,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Clima",
+      "year": 2025,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2799210637,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2020,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 367601500,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2020,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1768184736,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2020,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 1335668039,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2020,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1073063617,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2021,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 3388821584,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2021,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1357929076,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2021,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 2601801384,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2021,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1713400931,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2022,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2710594634,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2022,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 1629864622,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2022,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 1007191145,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2022,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 2861181702,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2023,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 2817307091,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2023,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 2122808517,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2023,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 885429497,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2023,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 399776086,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2024,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 4232832673,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2024,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 3636523901,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2024,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 847718199,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2024,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 304429698,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2025,
+      "term": "machine learning",
+      "round": 1,
+      "seed": 619390853,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2025,
+      "term": "deep learning",
+      "round": 1,
+      "seed": 250405835,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2025,
+      "term": "artificial intelligence",
+      "round": 1,
+      "seed": 120916808,
+      "requested": 100,
+      "returned": 100
+    },
+    {
+      "area": "Engenharia",
+      "year": 2025,
+      "term": "neural networks",
+      "round": 1,
+      "seed": 1388136409,
+      "requested": 100,
+      "returned": 100
+    }
+  ],
+  "limitations": [
+    "Randomização condicionada aos filtros e à cobertura OpenAlex",
+    "Amostra balanceada não representa a distribuição natural da literatura",
+    "Relevância científica ainda depende de auditoria humana",
+    "Alertas textuais não implicam exclusão automática"
+  ],
+  "shortfall_total": 0
+}
