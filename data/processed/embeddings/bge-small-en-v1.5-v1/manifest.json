@@ -1,0 +1,15 @@
+{
+  "created_at_utc": "2026-11-22T02:00:57.707667+00:00",
+  "dataset_sha256": "533fe010fee10dcc87e4ec196886e8a8d9ec6e17f0f4f3d507dc0cf278c79389",
+  "model": "BAAI/bge-small-en-v1.5",
+  "embedding_dimension": 384,
+  "article_count": 5000,
+  "chunk_count": 5678,
+  "chunk_size": 510,
+  "chunk_overlap": 64,
+  "batch_size": 16,
+  "aggregation": "weighted_mean_then_l2_normalization",
+  "chunk_normalization": "l2",
+  "embedding_dtype": "float32",
+  "embedding_file_sha256": "13fe24f37622790f6d6630fbdb5e91742060f95a8d7310597d3bd98f2a7f465c"
+}
