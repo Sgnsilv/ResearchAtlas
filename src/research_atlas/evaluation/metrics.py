@@ -1,3 +1,4 @@
+
 """Avaliação interna de partições de clusterização do ResearchAtlas."""
 
 import numpy as np
@@ -7,13 +8,15 @@ from sklearn.metrics import (
     silhouette_score,
 )
 
-from research_atlas.clustering.algorithms import summarize_clusters
+from research_atlas.clustering.algorithms import (
+    summarize_clusters,
+    validate_embeddings,
+)
 
 SILHOUETTE_SAMPLE_SIZE = 2000
 DEFAULT_SEED = 42
 
-# Acima desta fração dos artigos agrupados em um único cluster,
-# a partição é considerada degenerada (gera aviso, não erro).
+# Limite para sinalização de clusters dominantes.
 MAX_CLUSTER_SHARE = 0.8
 
 
@@ -24,58 +27,104 @@ def evaluate_partition(
     sample_size: int = SILHOUETTE_SAMPLE_SIZE,
     seed: int = DEFAULT_SEED,
 ) -> dict:
-    """Calcula Silhouette, Davies-Bouldin e Calinski-Harabasz quando válidos."""
+    """
+    Avalia uma partição de clusterização.
+
+    Calcula Silhouette, Davies-Bouldin e Calinski-Harabasz
+    quando a partição é válida.
+
+    Para resultados do HDBSCAN, exclui artigos classificados
+    como ruído (rótulo -1) do cálculo das métricas.
+
+    Partições inválidas retornam métricas None e os motivos
+    correspondentes em 'reasons', sem interromper o pipeline.
+
+    Erros de entrada geram ValueError.
+    """
+    matrix = validate_embeddings(embeddings)
     labels = np.asarray(labels)
 
-    # 1. Validação de formato: estas condições SIM lançam ValueError,
-    #    pois indicam erro de uso e não uma partição ruim.
-    if labels.ndim != 1 or len(labels) != len(embeddings):
+    # 1. Validação das entradas.
+    if labels.ndim != 1 or len(labels) != len(matrix):
         raise ValueError("Rótulos incompatíveis com os embeddings")
 
-    # 2. Reaproveita o resumo que já existe (cobertura, ruído, tamanhos).
+    if not isinstance(sample_size, int) or sample_size < 2:
+        raise ValueError("sample_size deve ser um inteiro >= 2")
+
+    if not isinstance(seed, int):
+        raise ValueError("seed deve ser um inteiro")
+
+    # 2. Resumo da partição.
     summary = summarize_clusters(labels)
 
-    # 3. Seleciona apenas os artigos agrupados (fora do ruído).
+    # 3. Remoção de ruído para avaliação.
     mask = labels != -1
-    X, y = embeddings[mask], labels[mask]
+    X = matrix[mask]
+    y = labels[mask]
 
-    # 4. Condições de invalidez e avisos.
-    reasons, warnings = [], []
+    reasons = []
+    warnings = []
 
-    if summary["n_clusters"] < 2:
+    n_samples = summary["grouped_articles"]
+    n_clusters = summary["n_clusters"]
+
+    # 4. Identificação de condições inválidas.
+    if n_samples == 0:
+        reasons.append("sem_artigos_agrupados")
+
+    elif n_clusters < 2:
         reasons.append("menos_de_2_clusters")
-    elif summary["grouped_articles"] <= 1:
-        # a Silhouette exige 2 <= n_clusters <= n_amostras - 1
-        reasons.append("agrupados_insuficientes")
 
+    elif n_clusters >= n_samples:
+        reasons.append("clusters_insuficientes_para_metricas")
+
+    # 5. Identificação de avisos.
     if summary["min_cluster_size"] == 1:
         warnings.append("cluster_unitario")
 
-    if summary["grouped_articles"] > 0 and (
-        summary["max_cluster_size"] / summary["grouped_articles"] > MAX_CLUSTER_SHARE
-    ):
-        warnings.append("cluster_dominante")
+    if n_samples > 0:
+        largest_share = summary["max_cluster_size"] / n_samples
 
-    # 5. Métricas só quando a partição é válida.
-    silhouette = davies_bouldin = calinski_harabasz = None
+        if largest_share > MAX_CLUSTER_SHARE:
+            warnings.append("cluster_dominante")
+
+    # 6. Cálculo das métricas.
+    silhouette = None
+    davies_bouldin = None
+    calinski_harabasz = None
 
     if not reasons:
-        effective = min(sample_size, len(X))
+        effective_sample_size = min(sample_size, n_samples)
+
         silhouette = float(
             silhouette_score(
                 X,
                 y,
-                metric="euclidean",
-                sample_size=effective if effective < len(X) else None,
+                metric="cosine",
+                sample_size=(
+                    effective_sample_size
+                    if effective_sample_size < n_samples
+                    else None
+                ),
                 random_state=seed,
             )
         )
-        davies_bouldin = float(davies_bouldin_score(X, y))
-        calinski_harabasz = float(calinski_harabasz_score(X, y))
+
+        davies_bouldin = float(
+            davies_bouldin_score(X, y)
+        )
+
+        calinski_harabasz = float(
+            calinski_harabasz_score(X, y)
+        )
 
     return {
         **summary,
-        "scope": "full" if summary["noise_articles"] == 0 else "grouped_only",
+        "scope": (
+            "full"
+            if summary["noise_articles"] == 0
+            else "grouped_only"
+        ),
         "valid": not reasons,
         "reasons": reasons,
         "warnings": warnings,
