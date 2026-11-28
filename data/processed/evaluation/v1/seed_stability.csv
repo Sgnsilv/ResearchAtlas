@@ -1,0 +1,8 @@
+config_id,representation,feature_space,algorithm,k,stability_type,n_seeds,n_seed_pairs,seeds,ari_mean,ari_std,ari_min,ari_max,source_artifact
+kmeans_k5,bge-small-en-v1.5,bge-small-en-v1.5:384d_l2,kmeans,5,seed_initialization,5,10,11;21;42;73;101,0.9978501467761584,0.0011788332959877916,0.9956413137074157,1.0,clustering/v1/kmeans_stability.csv
+kmeans_k7,bge-small-en-v1.5,bge-small-en-v1.5:384d_l2,kmeans,7,seed_initialization,5,10,11;21;42;73;101,0.9471107786845196,0.05936817398915175,0.873494670272018,1.0,clustering/v1/kmeans_stability.csv
+kmeans_k8,bge-small-en-v1.5,bge-small-en-v1.5:384d_l2,kmeans,8,seed_initialization,5,10,11;21;42;73;101,0.8620740779801312,0.09145508268215015,0.7518119638639249,0.9927834230738564,clustering/v1/kmeans_stability.csv
+kmeans_k9,bge-small-en-v1.5,bge-small-en-v1.5:384d_l2,kmeans,9,seed_initialization,5,10,11;21;42;73;101,0.892592107799423,0.06280397141353015,0.823560071110899,0.9961048250335087,clustering/v1/kmeans_stability.csv
+tfidf_10k_k5,tfidf,tfidf:10000f_sparse,kmeans,5,seed_initialization,5,10,11;21;42;73;101,0.6577649667850053,0.18219415998347907,0.47415058501555657,0.9167194441791227,tfidf_baseline/v1/tfidf_stability.csv
+tfidf_10k_k8,tfidf,tfidf:10000f_sparse,kmeans,8,seed_initialization,5,10,11;21;42;73;101,0.6691734847000672,0.08355351033772279,0.5700721182027312,0.8817576464188683,tfidf_baseline/v1/tfidf_stability.csv
+tfidf_10k_k13,tfidf,tfidf:10000f_sparse,kmeans,13,seed_initialization,5,10,11;21;42;73;101,0.5043950027837888,0.05884439449875393,0.4439533851800454,0.6329056454930797,tfidf_baseline/v1/tfidf_stability.csv

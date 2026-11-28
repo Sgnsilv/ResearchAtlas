@@ -1,0 +1,119 @@
+{
+  "version": "1",
+  "issue": "#08",
+  "run_id": "b11fb931938fc7f4575495ff6523a3786baf3361bebb1288d79c833b3917c4d9",
+  "run_id_method": "sha256_canonical_payload",
+  "dataset_articles": 5000,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "representations": [
+    "bge-small-en-v1.5",
+    "tfidf"
+  ],
+  "parameters": {
+    "random_seed": 42,
+    "silhouette_metric": "cosine",
+    "silhouette_sample_size": 2000,
+    "silhouette_full_fallback_max": 10000,
+    "davies_bouldin_geometry": "euclidean",
+    "calinski_harabasz_geometry": "euclidean",
+    "tfidf_sparse_only_cosine_silhouette": true,
+    "low_coverage_pct_operational": 50.0,
+    "max_cluster_share": 0.8,
+    "min_intersection_size": 3,
+    "resampling_stability_executed": false,
+    "hdbscan_ari_protocol": "grouped_intersection_only",
+    "ari_seed_vs_partition_distinction": "seed_stability.csv registra estabilidade entre sementes (seed_initialization); partition_concordance.csv registra concordância estrutural entre partições distintas"
+  },
+  "provenance": {
+    "modules": [
+      "research_atlas.evaluation.metrics",
+      "research_atlas.evaluation.pipeline",
+      "research_atlas.evaluation.stability",
+      "research_atlas.evaluation.export"
+    ],
+    "upstream_artifacts": {
+      "dataset": "dataset_selected.parquet",
+      "embeddings": "embeddings/bge-small-en-v1.5-v1",
+      "bge_clustering": "clustering/v1",
+      "tfidf_baseline": "tfidf_baseline/v1"
+    },
+    "upstream_created_at_utc": {
+      "embeddings": "2026-11-22T02:00:57.707667+00:00",
+      "bge_clustering": "2026-11-22T02:56:47.523497+00:00",
+      "tfidf_baseline": "2026-11-22T03:15:32.701465+00:00"
+    },
+    "tfidf_vocabulary_sizes": {
+      "10k": 10000,
+      "20k": 20000
+    },
+    "tfidf_primary_configuration": {
+      "ngram_range": [
+        1,
+        2
+      ],
+      "max_features": 10000,
+      "min_df": 3,
+      "max_df": 0.95,
+      "stop_words": "english",
+      "sublinear_tf": true,
+      "norm": "l2",
+      "k": 8,
+      "random_state": 42,
+      "n_init": 10
+    },
+    "kmeans_stability_seeds": [
+      11,
+      21,
+      42,
+      73,
+      101
+    ]
+  },
+  "summary": {
+    "evaluation_configurations": 24,
+    "bge_configurations": 18,
+    "tfidf_configurations": 6,
+    "full_scope_configurations": 13,
+    "grouped_only_configurations": 11,
+    "seed_stability_configurations": 7,
+    "partition_pairs_total": 276,
+    "partition_pairs_valid": 249,
+    "partition_pairs_invalid": 27,
+    "full_ari_matrix_size": 13,
+    "identical_partition_pairs": 2,
+    "reference_metrics_reconciled": 119,
+    "reference_stability_reconciled": 9
+  },
+  "inputs_sha256": {
+    "dataset_selected.parquet": "533fe010fee10dcc87e4ec196886e8a8d9ec6e17f0f4f3d507dc0cf278c79389",
+    "embeddings/bge-small-en-v1.5-v1/embeddings.npy": "13fe24f37622790f6d6630fbdb5e91742060f95a8d7310597d3bd98f2a7f465c",
+    "embeddings/bge-small-en-v1.5-v1/metadata.parquet": "c9e1febb9f895a64aa00c29de2bc488248fb1d8eb6375f1ed3391aa49f05ba08",
+    "embeddings/bge-small-en-v1.5-v1/manifest.json": "df19a1b193bd99e47fa3acce527a5bbfed5f3af4427aa5366b2b377f62485680",
+    "clustering/v1/cluster_assignments.parquet": "ad0715fc912c83f7eb732580b454c8d1f28b4f5b2a5d4b9a1ac2f2b427762f75",
+    "clustering/v1/kmeans_stability.csv": "de756eabc5e5ed2f0ac4d9985899a49a6ddb980e9593a8c56edc9da17051dc2e",
+    "clustering/v1/manifest.json": "f75587fd2216adefcc4ffa818f15d2a0a1c7e1523ecc4998d9a9621024148be8",
+    "tfidf_baseline/v1/tfidf_assignments.parquet": "952e362154673a5728843655bb1b3031ef344c4fbf8bf67411a1c293b6906c18",
+    "tfidf_baseline/v1/tfidf_stability.csv": "93e409437599ede7d891ee570968529bdd43a10dfde15c823ad89b61384ee147",
+    "tfidf_baseline/v1/manifest.json": "61324f0282857f2a219fc025b081576db1f30a5a5493847c2425a9888d481960",
+    "clustering/v1/kmeans_metrics.csv": "66994dd714b3cd2ddfc97ff9e487d0e571f4f8edb6cb545b7b3e31a60ed2bf95",
+    "clustering/v1/agglomerative_metrics.csv": "7a28808a93f641da0bd076ef0492cb88529733d6e999ce4426b14a67feb2c413",
+    "clustering/v1/hdbscan_eom_metrics.csv": "97983710a48577fdb941e2ab6b83a94e442ebb86192a69fa481fd589ffd69b63",
+    "clustering/v1/hdbscan_leaf_metrics.csv": "d67c2923cf943a14346fcacd0531792ac87757272b1e2c637360836dd3170924",
+    "tfidf_baseline/v1/kmeans_k_sensitivity.csv": "e302876ccd2ed3f5be6d5be8f512ce7a479f6a4890f88d727473c238b14de2bd",
+    "tfidf_baseline/v1/tfidf_final_candidates.csv": "4b65ef6b9eff99097ff378a1d4f4cd39dccae039561f4efdb180233b1c26deed"
+  },
+  "files_sha256": {
+    "evaluation_metrics.csv": "a036e430400aeb3296faae07dc9322320594f62c627e97d9fd3273a3a0bef860",
+    "seed_stability.csv": "3cedcbb8a5a3adc044e86ba0565a24e14fb711642fa42cd901cb0bb3733666aa",
+    "partition_concordance.csv": "3537635324d8d2df0686c93ee47117a1edb26a58b030bdaa986c57926e4a3c61",
+    "full_ari_matrix.csv": "3337f00539487ece8811fc477ae1507337048d1467373c78630ede9d82d891ec",
+    "identical_partitions.csv": "1c2a6931633ad487473ed6c2db715be4ca9a6b67508df17ecab427f9aa682cad"
+  },
+  "limitations": [
+    "A estabilidade por reamostragem não foi executada nesta entrega; a análise de estabilidade restringe-se à variação entre sementes de inicialização do K-Means.",
+    "Matrizes TF-IDF permanecem esparsas e avaliam apenas Silhouette cosseno; Davies-Bouldin e Calinski-Harabasz permanecem ausentes com justificativa explícita (matriz_esparsa_nao_densificada).",
+    "Métricas de escopo grouped_only (HDBSCAN) e de espaços vetoriais distintos (BGE vs TF-IDF) não são diretamente equivalentes a partições completas no mesmo espaço.",
+    "O ARI envolvendo partições com ruído (HDBSCAN) é calculado exclusivamente na interseção dos artigos agrupados e não representa concordância global da base.",
+    "LOW_COVERAGE_PCT (50.0) e SILHOUETTE_FULL_FALLBACK_MAX (10000) são convenções operacionais deste pipeline, não limiares científicos universais."
+  ]
+}
