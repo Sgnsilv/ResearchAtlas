@@ -1,6 +1,16 @@
-"""Avaliação interna de partições de clusterização do ResearchAtlas."""
+"""
+Avaliação interna de partições de clusterização do ResearchAtlas.
+
+LOW_COVERAGE_PCT e SILHOUETTE_FULL_FALLBACK_MAX são decisões
+operacionais deste pipeline (sinalização de baixa cobertura e limite de
+custo do fallback da Silhouette), não limiares científicos universais.
+
+Matrizes esparsas são aceitas apenas para a Silhouette cosseno, sem
+densificação; Davies-Bouldin e Calinski-Harabasz ficam indisponíveis.
+"""
 
 import numpy as np
+from scipy import sparse
 from sklearn.metrics import (
     calinski_harabasz_score,
     davies_bouldin_score,
@@ -26,6 +36,36 @@ DEGENERACY_TOLERANCE = 1e-9
 SILHOUETTE_METRIC = "cosine"
 DAVIES_BOULDIN_GEOMETRY = "euclidean"
 CALINSKI_HARABASZ_GEOMETRY = "euclidean"
+
+
+def _row_norms(matrix) -> np.ndarray:
+    if sparse.issparse(matrix):
+        squares = matrix.multiply(matrix).sum(axis=1)
+        return np.sqrt(np.asarray(squares, dtype=np.float64).ravel())
+
+    return np.linalg.norm(matrix, axis=1)
+
+
+def _validate_features(features) -> tuple:
+    """Valida embeddings densos ou uma matriz esparsa de características."""
+    if not sparse.issparse(features):
+        return validate_embeddings(features), False
+
+    matrix = features.tocsr()
+
+    if matrix.ndim != 2 or matrix.shape[0] < 3 or matrix.shape[1] == 0:
+        raise ValueError("Matriz de características com formato inválido")
+
+    if not np.issubdtype(matrix.dtype, np.number):
+        raise ValueError("Características devem ser numéricas")
+
+    if not np.isfinite(matrix.data).all():
+        raise ValueError("Matriz contém valores não finitos")
+
+    if np.any(_row_norms(matrix) == 0):
+        raise ValueError("Matriz contém vetores nulos")
+
+    return matrix, True
 
 
 def _as_integer(value, message: str) -> int:
@@ -151,6 +191,10 @@ def evaluate_partition(
     Calcula Silhouette (cosseno), Davies-Bouldin e Calinski-Harabasz
     (euclidianos) quando a partição é válida.
 
+    Para matriz esparsa (por exemplo TF-IDF), calcula apenas a
+    Silhouette, sem densificar; Davies-Bouldin e Calinski-Harabasz
+    ficam None com motivo em '*_unavailable_reason'.
+
     Artigos de ruído (-1) são excluídos; nesse caso 'scope' é
     'grouped_only' e as métricas não são comparáveis às de partições
     'full'.
@@ -161,10 +205,10 @@ def evaluate_partition(
 
     Erros de entrada geram ValueError.
     """
-    matrix = validate_embeddings(embeddings)
+    matrix, is_sparse = _validate_features(embeddings)
     labels = np.asarray(labels)
 
-    if labels.ndim != 1 or len(labels) != len(matrix):
+    if labels.ndim != 1 or len(labels) != matrix.shape[0]:
         raise ValueError("Rótulos incompatíveis com os embeddings")
 
     sample_size = _as_integer(
@@ -204,7 +248,7 @@ def evaluate_partition(
     elif n_clusters >= n_samples:
         reasons.append("clusters_insuficientes_para_metricas")
 
-    if not reasons:
+    if not reasons and not is_sparse:
         diagnostics = _centroid_diagnostics(X, y)
         tolerance = diagnostics["tolerance"]
 
@@ -235,7 +279,7 @@ def evaluate_partition(
     ):
         warnings.append("cobertura_baixa")
 
-    norms = np.linalg.norm(matrix, axis=1)
+    norms = _row_norms(matrix)
     input_l2_normalized = bool(
         np.allclose(norms, 1.0, atol=NORM_TOLERANCE)
     )
@@ -264,8 +308,27 @@ def evaluate_partition(
         warnings.extend(info.pop("warnings"))
         silhouette_info = info
 
-        davies_bouldin = float(davies_bouldin_score(X, y))
-        calinski_harabasz = float(calinski_harabasz_score(X, y))
+        if not is_sparse:
+            davies_bouldin = float(davies_bouldin_score(X, y))
+            calinski_harabasz = float(calinski_harabasz_score(X, y))
+
+    unavailable = {
+        "silhouette": None,
+        "davies_bouldin": None,
+        "calinski_harabasz": None,
+    }
+
+    if reasons:
+        unavailable = dict.fromkeys(unavailable, "particao_invalida")
+    else:
+        if silhouette is None:
+            unavailable["silhouette"] = "amostra_invalida_sem_fallback"
+
+        if is_sparse:
+            unavailable["davies_bouldin"] = "matriz_esparsa_nao_densificada"
+            unavailable["calinski_harabasz"] = (
+                "matriz_esparsa_nao_densificada"
+            )
 
     return {
         **summary,
@@ -282,8 +345,18 @@ def evaluate_partition(
         "calinski_harabasz": calinski_harabasz,
         "n_evaluated": int(n_samples),
         "silhouette_metric": SILHOUETTE_METRIC,
-        "davies_bouldin_geometry": DAVIES_BOULDIN_GEOMETRY,
-        "calinski_harabasz_geometry": CALINSKI_HARABASZ_GEOMETRY,
+        "davies_bouldin_geometry": (
+            None if is_sparse else DAVIES_BOULDIN_GEOMETRY
+        ),
+        "calinski_harabasz_geometry": (
+            None if is_sparse else CALINSKI_HARABASZ_GEOMETRY
+        ),
+        "silhouette_unavailable_reason": unavailable["silhouette"],
+        "davies_bouldin_unavailable_reason": unavailable["davies_bouldin"],
+        "calinski_harabasz_unavailable_reason": unavailable[
+            "calinski_harabasz"
+        ],
+        "input_sparse": is_sparse,
         "input_l2_normalized": input_l2_normalized,
         "seed": seed,
         "sample_size_requested": sample_size,

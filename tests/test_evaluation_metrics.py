@@ -5,6 +5,7 @@ import json
 
 import numpy as np
 import pytest
+from scipy import sparse
 from sklearn.datasets import make_blobs
 from sklearn.metrics import silhouette_score
 
@@ -537,3 +538,128 @@ def test_normalization_is_reported(blobs):
 
     assert normalized["input_l2_normalized"] is True
     assert "embeddings_nao_normalizados" not in normalized["warnings"]
+
+
+def test_dense_valid_partition_has_no_unavailable_reasons(blobs):
+    X, y = blobs
+
+    result = evaluate_partition(X, y)
+
+    assert result["silhouette_unavailable_reason"] is None
+    assert result["davies_bouldin_unavailable_reason"] is None
+    assert result["calinski_harabasz_unavailable_reason"] is None
+    assert result["input_sparse"] is False
+
+
+def test_invalid_partition_reports_unavailable_reasons(blobs):
+    X, _ = blobs
+
+    result = evaluate_partition(X, np.zeros(len(X), dtype=int))
+
+    assert result["silhouette_unavailable_reason"] == "particao_invalida"
+    assert result["davies_bouldin_unavailable_reason"] == "particao_invalida"
+    assert (
+        result["calinski_harabasz_unavailable_reason"]
+        == "particao_invalida"
+    )
+
+
+def test_unavailable_silhouette_reason_after_invalid_sample(
+    blobs,
+    monkeypatch,
+):
+    X, _ = blobs
+
+    monkeypatch.setattr(metrics, "SILHOUETTE_FULL_FALLBACK_MAX", 100)
+    labels = _sample_misses_cluster(len(X), sample_size=10, seed=42)
+
+    result = evaluate_partition(X, labels, sample_size=10, seed=42)
+
+    assert (
+        result["silhouette_unavailable_reason"]
+        == "amostra_invalida_sem_fallback"
+    )
+    assert result["davies_bouldin_unavailable_reason"] is None
+
+
+def test_sparse_input_computes_only_cosine_silhouette(blobs):
+    X, y = blobs
+
+    features = sparse.csr_matrix(np.abs(X) + 0.1)
+    result = evaluate_partition(features, y)
+
+    assert result["input_sparse"] is True
+    assert result["valid"] is True
+    assert result["silhouette"] == pytest.approx(
+        silhouette_score(features, y, metric="cosine")
+    )
+    assert result["davies_bouldin"] is None
+    assert result["calinski_harabasz"] is None
+    assert result["davies_bouldin_geometry"] is None
+    assert result["calinski_harabasz_geometry"] is None
+    assert (
+        result["davies_bouldin_unavailable_reason"]
+        == "matriz_esparsa_nao_densificada"
+    )
+    assert (
+        result["calinski_harabasz_unavailable_reason"]
+        == "matriz_esparsa_nao_densificada"
+    )
+
+
+def test_sparse_input_is_never_densified(blobs, monkeypatch):
+    X, y = blobs
+
+    features = sparse.csr_matrix(np.abs(X) + 0.1)
+    received = []
+    original = metrics.silhouette_score
+
+    def spy(matrix, labels, **kwargs):
+        received.append(sparse.issparse(matrix))
+        return original(matrix, labels, **kwargs)
+
+    monkeypatch.setattr(metrics, "silhouette_score", spy)
+
+    evaluate_partition(features, y, sample_size=100)
+
+    assert received == [True]
+
+
+def test_sparse_input_with_noise_keeps_grouped_only_scope(blobs):
+    X, y = blobs
+
+    features = sparse.csr_matrix(np.abs(X) + 0.1)
+    labels = y.copy()
+    labels[:30] = -1
+
+    result = evaluate_partition(features, labels)
+
+    assert result["scope"] == "grouped_only"
+    assert result["n_evaluated"] == 270
+
+
+def test_sparse_input_with_zero_row_raises(blobs):
+    X, y = blobs
+
+    dense = np.abs(X) + 0.1
+    dense[0] = 0
+
+    with pytest.raises(ValueError, match="vetores nulos"):
+        evaluate_partition(sparse.csr_matrix(dense), y)
+
+
+def test_sparse_input_with_non_finite_values_raises(blobs):
+    X, y = blobs
+
+    dense = np.abs(X) + 0.1
+    dense[0, 0] = np.nan
+
+    with pytest.raises(ValueError, match="não finitos"):
+        evaluate_partition(sparse.csr_matrix(dense), y)
+
+
+def test_sparse_label_mismatch_raises(blobs):
+    X, y = blobs
+
+    with pytest.raises(ValueError, match="Rótulos incompatíveis"):
+        evaluate_partition(sparse.csr_matrix(np.abs(X) + 0.1), y[:-1])
