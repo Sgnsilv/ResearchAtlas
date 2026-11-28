@@ -24,11 +24,11 @@ A partir de metadados da OpenAlex e métodos de aprendizado não supervisionado,
 
 ## Estado atual
 
-O ResearchAtlas possui um dataset científico balanceado, embeddings semânticos BGE, um baseline lexical TF-IDF + K-Means e experimentos comparativos com K-Means, Agglomerative Clustering e HDBSCAN.
+O ResearchAtlas possui um dataset científico balanceado, embeddings semânticos BGE, um baseline lexical TF-IDF + K-Means, experimentos comparativos com K-Means, Agglomerative Clustering e HDBSCAN e um pipeline determinístico de avaliação consolidada, estabilidade por semente e concordância entre partições.
 
-As etapas de coleta, preparação, representação textual e experimentação inicial foram implementadas e testadas.
+As etapas de coleta, preparação, representação textual, clusterização exploratória e consolidação quantitativa de métricas foram implementadas e testadas.
 
-A avaliação aprofundada da qualidade e estabilidade dos agrupamentos, a interpretação científica e a auditoria humana permanecem em desenvolvimento.
+A interpretação temática aprofundada, a investigação de pontes interdisciplinares (Issue #09) e a revisão humana das amostras permanecem em desenvolvimento.
 
 | Indicador | Resultado |
 |---|---:|
@@ -45,7 +45,9 @@ A avaliação aprofundada da qualidade e estabilidade dos agrupamentos, a interp
 | Clusters do baseline TF-IDF selecionado | 8 |
 | Algoritmos de clusterização semântica | 3 |
 | Configurações com rótulos BGE preservados | 18 |
-| Testes automatizados | 106 aprovados |
+| Configurações consolidadas na avaliação (BGE + TF-IDF) | 24 |
+| Pares de partições avaliados por ARI | 276 |
+| Testes automatizados | 250 aprovados |
 
 O arquivo de referência dos artigos é:
 
@@ -139,8 +141,14 @@ ResearchAtlas/
 │       │   ├── embeddings.py
 │       │   └── tfidf.py
 │       │
-│       └── clustering/
-│           └── algorithms.py
+│       ├── clustering/
+│       │   └── algorithms.py
+│       │
+│       └── evaluation/
+│           ├── metrics.py
+│           ├── pipeline.py
+│           ├── stability.py
+│           └── export.py
 │
 ├── notebooks/
 │   ├── 01_embeddings_semanticos.ipynb
@@ -170,14 +178,23 @@ ResearchAtlas/
 │       │       ├── tfidf_final_candidates.csv
 │       │       └── manifest.json
 │       │
-│       └── clustering/
+│       ├── clustering/
+│       │   └── v1/
+│       │       ├── cluster_assignments.parquet
+│       │       ├── kmeans_metrics.csv
+│       │       ├── kmeans_stability.csv
+│       │       ├── agglomerative_metrics.csv
+│       │       ├── hdbscan_eom_metrics.csv
+│       │       ├── hdbscan_leaf_metrics.csv
+│       │       └── manifest.json
+│       │
+│       └── evaluation/
 │           └── v1/
-│               ├── cluster_assignments.parquet
-│               ├── kmeans_metrics.csv
-│               ├── kmeans_stability.csv
-│               ├── agglomerative_metrics.csv
-│               ├── hdbscan_eom_metrics.csv
-│               ├── hdbscan_leaf_metrics.csv
+│               ├── evaluation_metrics.csv
+│               ├── seed_stability.csv
+│               ├── partition_concordance.csv
+│               ├── full_ari_matrix.csv
+│               ├── identical_partitions.csv
 │               └── manifest.json
 │
 ├── reports/
@@ -187,10 +204,12 @@ ResearchAtlas/
 │       ├── final_dataset.md
 │       ├── semantic_embeddings.md
 │       ├── tfidf_baseline.md
-│       └── clustering_comparison.md
+│       ├── clustering_comparison.md
+│       └── evaluation_stability.md
 │
 ├── docs/
-│   └── dataset.md
+│   ├── dataset.md
+│   └── methodology.md
 │
 ├── tests/
 │   ├── test_embeddings.py
@@ -198,7 +217,14 @@ ResearchAtlas/
 │   ├── test_tfidf.py
 │   ├── test_tfidf_artifacts.py
 │   ├── test_clustering.py
-│   └── test_clustering_artifacts.py
+│   ├── test_clustering_artifacts.py
+│   ├── test_evaluation_metrics.py
+│   ├── test_evaluation_pipeline.py
+│   ├── test_evaluation_pipeline_artifacts.py
+│   ├── test_evaluation_stability.py
+│   ├── test_evaluation_stability_artifacts.py
+│   ├── test_evaluation_export.py
+│   └── test_evaluation_artifacts.py
 │
 ├── .env.example
 ├── .gitignore
@@ -218,6 +244,7 @@ Os arquivos de referência necessários à reprodução dos experimentos são ad
 - Embeddings e metadados associados;
 - Artefatos do baseline TF-IDF;
 - Resultados de clusterização semântica;
+- Artefatos consolidados de avaliação, estabilidade e concordância;
 - Manifestos com parâmetros e checksums.
 
 Caches, arquivos temporários e saídas intermediárias não são necessariamente versionados.
@@ -834,24 +861,63 @@ Os testes de integração verificam:
 
 **Relatório:** [Comparação de algoritmos de clusterização](reports/experiments/clustering_comparison.md)
 
-**Estado:** experimentos, implementação reutilizável, artefatos e testes concluídos na branch da Issue #07; integração à `dev` pendente.
+**Estado:** experimentos, implementação reutilizável, artefatos, testes e documentação concluídos e integrados à `dev` por meio do PR #23.
 
-## Comparação preliminar entre TF-IDF e BGE
+### 11. Avaliação consolidada e estabilidade — Issue #08
 
-As Issues #06 e #07 utilizaram os mesmos 5.000 artigos, permitindo uma comparação exploratória entre representações lexicais e semânticas.
+Foi implementado o pipeline determinístico de avaliação interna, estabilidade entre inicializações e concordância estrutural entre partições em `src/research_atlas/evaluation/`, consolidando as **24 configurações** previamente versionadas (18 semânticas BGE e 6 lexicais TF-IDF) sem reexecutar algoritmos de clusterização.
 
-| Representação | Algoritmo | k | Silhouette | ARI médio |
-|---|---|---:|---:|---:|
-| TF-IDF 10k | K-Means | 8 | 0,0146 | 0,6692 |
-| BGE 384d | K-Means | 8 | 0,1472 | 0,8621 |
+#### Módulos implementados
 
-O BGE apresentou maior Silhouette e maior estabilidade entre inicializações nos experimentos registrados.
+- `src/research_atlas/evaluation/metrics.py`: avaliação interna com registro explícito de geometria, diagnóstico de partições inválidas ou degeneradas, amostragem determinística da Silhouette cosseno com fallback controlado e suporte a matrizes esparsas sem densificação;
+- `src/research_atlas/evaluation/pipeline.py`: verificação de hashes SHA-256 e alinhamento posicional de `openalex_id`, consolidação das 24 configurações e reconciliação com os 119 valores de referência das Issues #06 e #07;
+- `src/research_atlas/evaluation/stability.py`: consolidação da estabilidade entre sementes do K-Means, assinatura canônica de partições e cálculo de concordância por ARI em escopo completo (`full`) e em interseção agrupada (`grouped_intersection`);
+- `src/research_atlas/evaluation/export.py`: interface explícita de exportação determinística e escrita atômica com validação pós-escrita de hashes SHA-256.
 
-Entretanto, as representações ocupam espaços vetoriais diferentes e apresentam distribuições de distância distintas.
+Execução reproduzível:
 
-**Não é metodologicamente suficiente concluir que uma representação é superior apenas comparando os valores absolutos de Silhouette.**
+```bash
+PYTHONPATH=src uv run python -m research_atlas.evaluation.export
+```
 
-Uma comparação mais aprofundada será realizada na Issue #08.
+#### Decisões metodológicas e resultados principais
+
+- **TF-IDF esparso preservado:** matrizes `5.000 × 10.000` e `5.000 × 20.000` permanecem em formato CSR; apenas a Silhouette cosseno é calculada, registrando Davies-Bouldin e Calinski-Harabasz como ausentes (`matriz_esparsa_nao_densificada`).
+- **Separação entre `full` e `grouped_only`:** as 13 partições completas (K-Means e Agglomerative) e as 11 partições parciais do HDBSCAN possuem grupos de comparabilidade distintos (`comparability_group`); Silhouettes em `grouped_only` (como `0,2764` em `hdbscan_leaf_mcs20_ms5`, com `16,80%` de cobertura) não são diretamente comparáveis às partições `full`.
+- **Estabilidade entre sementes versus concordância entre partições:** `seed_stability.csv` preserva a variação entre cinco sementes do K-Means (`kmeans_k5` com `ARI médio = 0,9979` e `kmeans_k8` com `0,8621` no BGE; `tfidf_10k_k8` com `0,6692` no TF-IDF), separada da concordância estrutural entre configurações distintas em `partition_concordance.csv` (`276` pares: `249` válidos e `27` inválidos por `menos_de_2_clusters_na_intersecao`).
+- **Partições completas (`13 × 13`):** `kmeans_k8` e `agglomerative_ward_k8` apresentam `ARI = 0,7139` no espaço BGE, enquanto `agglomerative_average_k8` confirma degenerescência (`99,66%` em um único cluster, `ARI ≈ 0` frente às demais configurações).
+- **Interseções parciais (`grouped_intersection`):** comparações com HDBSCAN avaliam apenas artigos agrupados simultaneamente; valores altos de ARI sobre baixa cobertura (como `ARI = 1,0000` entre `hdbscan_eom_mcs30_ms10` e `hdbscan_eom_mcs50_ms10` em `25,96%` da base, ou `ARI = 0,8127` entre `kmeans_k8` e `hdbscan_leaf_mcs50_ms5` em `19,10%`) não representam concordância global.
+- **Partições globalmente idênticas:** dois pares HDBSCAN produziram exatamente a mesma partição global (`hdbscan_eom_mcs20_ms5` = `hdbscan_eom_mcs30_ms5` e `hdbscan_eom_mcs50_ms10` = `hdbscan_eom_mcs100_ms10`), preservados no catálogo com identificação explícita em `identical_partitions.csv`.
+- **Limitação explícita:** a estabilidade por reamostragem do corpus não foi executada nesta entrega.
+
+#### Artefatos
+
+```text
+data/processed/evaluation/v1/
+├── evaluation_metrics.csv
+├── seed_stability.csv
+├── partition_concordance.csv
+├── full_ari_matrix.csv
+├── identical_partitions.csv
+└── manifest.json
+```
+
+**Relatório:** [Avaliação consolidada de métricas, estabilidade e concordância](reports/experiments/evaluation_stability.md)
+
+**Estado:** pipeline, artefatos determinísticos, suíte de testes e documentação científica concluídos na branch da Issue #08, prontos para revisão e abertura de Pull Request para `dev`.
+
+## Comparação entre TF-IDF e BGE
+
+As Issues #06, #07 e #08 avaliaram os mesmos 5.000 artigos alinhados por `openalex_id`, permitindo contrastar representações lexicais e semânticas sob regras explícitas de comparabilidade.
+
+| Representação | Algoritmo | k | Silhouette (cosseno) | ARI médio (sementes) | ARI estrutural (`kmeans_k8` vs `tfidf_10k_k8`) |
+|---|---|---:|---:|---:|---:|
+| TF-IDF 10k | K-Means | 8 | 0,0146 | 0,6692 | 0,4420 |
+| BGE 384d | K-Means | 8 | 0,1472 | 0,8621 | 0,4420 |
+
+O BGE apresentou maior estabilidade entre inicializações do K-Means, e a comparação combinatória por ARI entre as partições completas BGE e TF-IDF situou-se entre `0,2790` e `0,4686` (excluindo `agglomerative_average_k8`), indicando estrutura macrotemática parcialmente compartilhada com divergências relevantes na organização fina.
+
+Como as representações ocupam espaços vetoriais com dimensionalidade e esparsidade distintas, **valores absolutos maiores de Silhouette não comprovam, isoladamente, superioridade científica**. A validação qualitativa dos agrupamentos pertence à Issue #09.
 
 ## Testes
 
@@ -864,7 +930,7 @@ uv run pytest -q
 Última execução local registrada:
 
 ```text
-106 passed in 1.36s
+250 passed
 ```
 
 ### Testes do baseline TF-IDF
@@ -883,6 +949,19 @@ uv run pytest \
   tests/test_clustering_artifacts.py -v
 ```
 
+### Testes de avaliação, estabilidade e exportação
+
+```bash
+uv run pytest \
+  tests/test_evaluation_metrics.py \
+  tests/test_evaluation_pipeline.py \
+  tests/test_evaluation_pipeline_artifacts.py \
+  tests/test_evaluation_stability.py \
+  tests/test_evaluation_stability_artifacts.py \
+  tests/test_evaluation_export.py \
+  tests/test_evaluation_artifacts.py -v
+```
+
 A suíte contempla:
 
 - Cliente OpenAlex;
@@ -894,7 +973,9 @@ A suíte contempla:
 - K-Means;
 - Agglomerative Clustering;
 - HDBSCAN;
-- Integridade e consistência dos artefatos.
+- Métricas internas, matrizes esparsas e tratamento de partições degeneradas;
+- Consolidação e reconciliação de métricas, estabilidade por semente e concordância ARI;
+- Escrita atômica, determinismo e integridade por SHA-256 dos artefatos.
 
 Os testes automatizados não dependem de novas chamadas reais à API OpenAlex.
 
@@ -960,6 +1041,15 @@ Os experimentos da Issue #07 preservam:
 
 Os notebooks documentam as execuções experimentais realizadas no Google Colab.
 
+### Avaliação consolidada e concordância
+
+Os artefatos da Issue #08 (`data/processed/evaluation/v1/`) preservam:
+
+- `run_id` determinístico derivado por SHA-256 do payload canônico (sem timestamps variáveis);
+- Hashes SHA-256 dos 16 insumos consumidos e dos 5 CSVs exportados;
+- Protocolo de geometria e amostragem da Silhouette (`metric="cosine"`, `sample_size=2000`, `seed=42`);
+- Separação explícita entre escopos `full`, `grouped_only` e `grouped_intersection`.
+
 ### Verificação de integridade
 
 É possível verificar a versão do dataset com:
@@ -968,12 +1058,18 @@ Os notebooks documentam as execuções experimentais realizadas no Google Colab.
 sha256sum data/processed/dataset_selected.parquet
 ```
 
-E a versão dos embeddings com:
+A versão dos embeddings com:
 
 ```bash
 sha256sum \
   data/processed/embeddings/\
 bge-small-en-v1.5-v1/embeddings.npy
+```
+
+E os artefatos consolidados de avaliação com:
+
+```bash
+sha256sum data/processed/evaluation/v1/*
 ```
 
 Novas coletas, mudanças no pré-processamento, alterações de dependências e diferentes configurações de execução podem produzir resultados distintos.
@@ -993,28 +1089,14 @@ As seguintes limitações devem ser consideradas:
 7. Embeddings semânticos podem preservar similaridades não relacionadas à interdisciplinaridade.
 8. Algoritmos de clusterização apresentam comportamentos distintos diante de parâmetros e distribuições dos dados.
 9. A presença de artigos de diferentes áreas em um cluster não comprova interdisciplinaridade.
-10. A estabilidade entre inicializações não garante estabilidade sob reamostragem.
-11. Métricas internas não substituem inspeção científica ou validação humana.
-12. A busca de hiperparâmetros realizada não foi exaustiva.
+10. A avaliação de estabilidade contemplou apenas sementes de inicialização do K-Means; a estabilidade sob reamostragem do corpus não foi executada.
+11. Valores de Silhouette em espaços vetoriais distintos ou em escopo `grouped_only` não são diretamente equivalentes, e valores de ARI sobre interseções parciais não representam concordância global.
+12. Métricas internas e concordância estrutural não substituem inspeção científica ou validação humana.
+13. A busca de hiperparâmetros realizada não foi exaustiva.
 
 As conclusões devem ser interpretadas como hipóteses e evidências exploratórias, não como demonstrações definitivas de comunidades científicas interdisciplinares.
 
 ## Próximas etapas
-
-### Issue #08 — Avaliação de métricas e estabilidade
-
-Consolidar e comparar:
-
-- Silhouette;
-- Davies-Bouldin;
-- Calinski-Harabasz;
-- Adjusted Rand Index;
-- Distribuição dos clusters;
-- Cobertura e ruído;
-- Estabilidade;
-- Sensibilidade aos hiperparâmetros.
-
-O objetivo é estabelecer uma análise metodológica consistente e justificar a seleção das configurações que serão utilizadas nas etapas seguintes.
 
 ### Issue #09 — Interpretação e validação interdisciplinar
 
@@ -1082,4 +1164,4 @@ Os dados são utilizados conforme as condições de acesso e o protocolo cientí
 
 ---
 
-**Status:** dataset v1, embeddings BGE, baseline TF-IDF + K-Means e clusterização semântica implementados. As próximas etapas concentram-se na avaliação aprofundada dos agrupamentos, validação temática e identificação de possíveis conexões interdisciplinares.
+**Status:** dataset v1, embeddings BGE, baseline TF-IDF + K-Means, clusterização semântica e pipeline de avaliação e estabilidade implementados. A próxima etapa concentra-se na Issue #09 para interpretação temática, auditoria humana e investigação de possíveis conexões interdisciplinares.
