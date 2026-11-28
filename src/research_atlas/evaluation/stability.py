@@ -97,6 +97,24 @@ IDENTICAL_PARTITIONS_COLUMNS = [
     "identical_configs",
 ]
 
+IDENTICAL_PAIR_COLUMNS = [
+    "config_a",
+    "config_b",
+    "representation_a",
+    "representation_b",
+    "algorithm_a",
+    "algorithm_b",
+    "scope",
+    "n_articles",
+    "grouped_articles",
+    "noise_articles",
+    "coverage_pct",
+    "n_clusters",
+    "exact_label_match",
+    "ari",
+    "partition_signature",
+]
+
 CONCORDANCE_INTEGER_COLUMNS = [
     "n_articles",
     "n_grouped_a",
@@ -544,6 +562,57 @@ def find_identical_partitions(
     return table
 
 
+def build_identical_partition_pairs(
+    bge_assignments: pd.DataFrame,
+    tfidf_assignments: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Lista os pares de configurações com partições globalmente idênticas."""
+    partitions = _collect_partitions(bge_assignments, tfidf_assignments)
+    rows = []
+
+    for idx_a, part_a in enumerate(partitions):
+        for part_b in partitions[idx_a + 1 :]:
+            if part_a["signature"] != part_b["signature"]:
+                continue
+
+            comparison = compare_partitions(part_a["labels"], part_b["labels"])
+            summary = part_a["summary"]
+
+            rows.append(
+                {
+                    "config_a": part_a["config_id"],
+                    "config_b": part_b["config_id"],
+                    "representation_a": part_a["representation"],
+                    "representation_b": part_b["representation"],
+                    "algorithm_a": part_a["algorithm"],
+                    "algorithm_b": part_b["algorithm"],
+                    "scope": part_a["scope"],
+                    "n_articles": summary["n_articles"],
+                    "grouped_articles": summary["grouped_articles"],
+                    "noise_articles": summary["noise_articles"],
+                    "coverage_pct": summary["coverage_pct"],
+                    "n_clusters": summary["n_clusters"],
+                    "exact_label_match": comparison["exact_label_match"],
+                    "ari": comparison["ari"],
+                    "partition_signature": part_a["signature"],
+                }
+            )
+
+    table = pd.DataFrame(rows, columns=IDENTICAL_PAIR_COLUMNS)
+
+    for column in (
+        "n_articles",
+        "grouped_articles",
+        "noise_articles",
+        "n_clusters",
+    ):
+        table[column] = table[column].astype("Int64")
+
+    table["exact_label_match"] = table["exact_label_match"].astype("boolean")
+
+    return table
+
+
 def build_concordance_table(
     bge_assignments: pd.DataFrame,
     tfidf_assignments: pd.DataFrame | None = None,
@@ -707,6 +776,9 @@ def reconcile_stability_with_reference(
 
 def load_concordance_analysis(
     processed_dir: Path = PROCESSED_DIR,
+    *,
+    min_intersection_size: int = DEFAULT_MIN_INTERSECTION_SIZE,
+    verify_reference: bool = True,
 ) -> dict:
     """Executa a análise completa da Etapa 3A sem reexecutar algoritmos."""
     bge_assignments, tfidf_assignments = load_aligned_assignments(
@@ -714,17 +786,30 @@ def load_concordance_analysis(
     )
     seed_stability = load_seed_stability(processed_dir)
     identical = find_identical_partitions(bge_assignments, tfidf_assignments)
-    concordance = build_concordance_table(bge_assignments, tfidf_assignments)
+    identical_pairs = build_identical_partition_pairs(
+        bge_assignments,
+        tfidf_assignments,
+    )
+    concordance = build_concordance_table(
+        bge_assignments,
+        tfidf_assignments,
+        min_intersection_size=min_intersection_size,
+    )
     full_matrix = build_full_ari_matrix(bge_assignments, tfidf_assignments)
-    reconciliation = reconcile_stability_with_reference(
-        seed_stability,
-        concordance,
-        processed_dir,
+    reconciliation = (
+        reconcile_stability_with_reference(
+            seed_stability,
+            concordance,
+            processed_dir,
+        )
+        if verify_reference
+        else pd.DataFrame()
     )
 
     return {
         "seed_stability": seed_stability,
         "identical_partitions": identical,
+        "identical_pairs": identical_pairs,
         "concordance": concordance,
         "full_ari_matrix": full_matrix,
         "reconciliation": reconciliation,

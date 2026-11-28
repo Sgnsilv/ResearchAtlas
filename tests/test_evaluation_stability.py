@@ -9,9 +9,11 @@ from sklearn.metrics import adjusted_rand_score
 
 from research_atlas.evaluation.stability import (
     CONCORDANCE_COLUMNS,
+    IDENTICAL_PAIR_COLUMNS,
     IDENTICAL_PARTITIONS_COLUMNS,
     build_concordance_table,
     build_full_ari_matrix,
+    build_identical_partition_pairs,
     canonical_partition_signature,
     classify_comparison,
     compare_partitions,
@@ -243,6 +245,14 @@ def test_find_identical_partitions_keeps_all_configs(synthetic_frames):
         == "kmeans_k3;agglomerative_ward_k3"
     )
     assert bool(indexed.loc["tfidf_10k_k3", "is_duplicate_partition"]) is False
+
+    pairs = build_identical_partition_pairs(bge, tfidf)
+    assert list(pairs.columns) == IDENTICAL_PAIR_COLUMNS
+    assert len(pairs) == 1
+    assert pairs.loc[0, "config_a"] == "kmeans_k3"
+    assert pairs.loc[0, "config_b"] == "agglomerative_ward_k3"
+    assert bool(pairs.loc[0, "exact_label_match"]) is False
+    assert pairs.loc[0, "ari"] == pytest.approx(1.0)
 
 
 def test_concordance_table_and_full_matrix(synthetic_frames):

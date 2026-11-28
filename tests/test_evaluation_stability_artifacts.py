@@ -33,27 +33,42 @@ INPUT_FILES = (
 )
 
 
+def _snapshot_evaluation_dir() -> dict[str, str] | None:
+    eval_dir = PROCESSED_DIR / "evaluation"
+    if not eval_dir.exists():
+        return None
+    return {
+        str(p.relative_to(eval_dir)): sha256_file(p)
+        for p in sorted(eval_dir.rglob("*"))
+        if p.is_file()
+    }
+
+
 @pytest.fixture(scope="module")
 def run():
     before = {name: sha256_file(PROCESSED_DIR / name) for name in INPUT_FILES}
+    eval_before = _snapshot_evaluation_dir()
 
     started = time.perf_counter()
     analysis = load_concordance_analysis()
     elapsed = time.perf_counter() - started
 
     after = {name: sha256_file(PROCESSED_DIR / name) for name in INPUT_FILES}
+    eval_after = _snapshot_evaluation_dir()
 
     return {
         **analysis,
         "before": before,
         "after": after,
+        "eval_before": eval_before,
+        "eval_after": eval_after,
         "elapsed": elapsed,
     }
 
 
-def test_artifacts_are_untouched_and_no_new_evaluation_dir_created(run):
+def test_artifacts_are_untouched_by_concordance_analysis(run):
     assert run["before"] == run["after"]
-    assert not (PROCESSED_DIR / "evaluation").exists()
+    assert run["eval_before"] == run["eval_after"]
 
 
 def test_seed_stability_consolidates_bge_and_tfidf(run):
