@@ -1,0 +1,3 @@
+config_a,config_b,representation_a,representation_b,algorithm_a,algorithm_b,scope,n_articles,grouped_articles,noise_articles,coverage_pct,n_clusters,exact_label_match,ari,partition_signature
+hdbscan_eom_mcs20_ms5,hdbscan_eom_mcs30_ms5,bge-small-en-v1.5,bge-small-en-v1.5,hdbscan,hdbscan,grouped_only,5000,2840,2160,56.8,2,True,1.0,29206e626c3adddd420764412b726304a1a1239ba6d5f72c3b1a0c43a177471b
+hdbscan_eom_mcs50_ms10,hdbscan_eom_mcs100_ms10,bge-small-en-v1.5,bge-small-en-v1.5,hdbscan,hdbscan,grouped_only,5000,1298,3702,25.96,3,True,1.0,5282a58f093b47f0d4aeb9d0ab333ecd0a99d5d2dddfd4b2e431774f3d0f1678
